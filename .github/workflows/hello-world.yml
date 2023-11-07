@@ -1,15 +1,27 @@
-name: hello-world
+name: build-test-deploy
 on: push
-jobs:
-    hello-world-job:
-        runs-on: ubuntu-latest
-        steps: 
-            - name: Check out repository code
-              uses: actions/checkout@v3
-            - run: echo "$(cat hello_world.txt)"
-            - name: use node.js
-              uses: actions/setup-node@v3
-              with:
-                node-version: '18.x'
-            - run: npm install
-            - run: npm run build 
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: checkout repo #doesnt get required but is better for visual
+        uses: actions/checkout@v3 #allows to see the file inside
+      - name: use node.js 
+        uses: actions/setup-node@v3 #setting up node
+        with:
+          node-version: '18.x'
+      - run: npm install
+      - run: npm run build 
+  test: 
+    needs: build #needs to succesfully complete buil before starting testing 
+    #all of these initilaztion for test is required since jobs are independently working
+    runs-on: ubuntu-latest
+    steps: 
+      - name: checkout repo
+        uses: actions/checkout@v3
+      - name: use node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - run: npm install
+      - run: npm test
